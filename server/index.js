@@ -4,11 +4,7 @@ import { createServer } from 'http'
 import { randomUUID } from 'crypto'
 import { fileURLToPath } from 'url'
 import { dirname, join, resolve, basename, extname, sep } from 'path'
-<<<<<<< HEAD
 import { existsSync, readFileSync, writeFileSync, readdirSync, statSync, mkdirSync, rmSync, unlinkSync, stat, promises as fsPromises, createReadStream, createWriteStream, copyFileSync, readlinkSync, symlinkSync, renameSync } from 'fs'
-=======
-import { existsSync, readFileSync, writeFileSync, readdirSync, statSync, mkdirSync, rmSync, unlinkSync, stat, promises as fsPromises, createReadStream } from 'fs'
->>>>>>> 85873852dfefe92345a786b9d45ae2b966a444bd
 import { OpenClawGateway } from './gateway.js'
 import { parse } from 'dotenv'
 import os from 'os'
@@ -2178,14 +2174,10 @@ app.get('/api/media', (req, res) => {
     
     // Prevent directory traversal
     const safePath = path.replace(/\.\./g, '').replace(/\//g, sep)
-<<<<<<< HEAD
     
     // 支持环境变量配置媒体目录，默认使用用户主目录下的 .openclaw/media
     const defaultMediaDir = join(os.homedir(), '.openclaw', 'media')
     const mediaDir = process.env.MEDIA_DIR || defaultMediaDir
-=======
-    const mediaDir = '/home/ubuntu/.openclaw/media'
->>>>>>> 85873852dfefe92345a786b9d45ae2b966a444bd
     const fullPath = resolve(mediaDir, safePath)
     
     // Ensure the file is within the media directory
@@ -2231,7 +2223,6 @@ app.get('/api/media', (req, res) => {
   }
 })
 
-<<<<<<< HEAD
 // ============================================================
 // Backup & Restore API
 // ============================================================
@@ -3283,8 +3274,6 @@ app.post('/api/backup/upload', authMiddleware, backupUpload.single('backup'), as
   }
 })
 
-=======
->>>>>>> 85873852dfefe92345a786b9d45ae2b966a444bd
 if (hasDist) {
   app.use(express.static(distPath))
 

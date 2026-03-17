@@ -1090,7 +1090,6 @@ function buildImageUrl(part: ChatMessageContent): string | undefined {
     return `data:${mimeType};base64,${part.data}`
   }
   if (part.mediaPath) {
-<<<<<<< HEAD
     let mediaPath = part.mediaPath
     
     // 处理 MEDIA: 前缀
@@ -1114,19 +1113,11 @@ function buildImageUrl(part: ChatMessageContent): string | undefined {
       }
     }
     
-=======
-    const mediaPath = part.mediaPath
-    if (mediaPath.startsWith('MEDIA:')) {
-      const path = mediaPath.slice(6)
-      return `/api/media?path=${encodeURIComponent(path)}`
-    }
->>>>>>> 85873852dfefe92345a786b9d45ae2b966a444bd
     return `/api/media?path=${encodeURIComponent(mediaPath)}`
   }
   return undefined
 }
 
-<<<<<<< HEAD
 /**
  * 从路径中提取相对于媒体目录的相对路径
  */
@@ -1153,8 +1144,7 @@ function normalizeMediaPath(path: string): string {
   return path
 }
 
-=======
->>>>>>> 85873852dfefe92345a786b9d45ae2b966a444bd
+
 function extractImageFromText(text: string): { images: ImageItemView[]; cleanedText: string } {
   const images: ImageItemView[] = []
   let cleanedText = text
@@ -1164,12 +1154,8 @@ function extractImageFromText(text: string): { images: ImageItemView[]; cleanedT
   while ((match = mdImageRegex.exec(text)) !== null) {
     const imagePath = match[2]
     if (imagePath && imagePath.match(/\.(png|jpg|jpeg|gif|webp|bmp)$/i)) {
-<<<<<<< HEAD
       const normalizedPath = normalizeMediaPath(imagePath)
       const imageUrl = `/api/media?path=${encodeURIComponent(normalizedPath)}`
-=======
-      const imageUrl = `/api/media?path=${encodeURIComponent(imagePath)}`
->>>>>>> 85873852dfefe92345a786b9d45ae2b966a444bd
       images.push({
         mimeType: `image/${imagePath.split('.').pop()?.toLowerCase() || 'png'}`,
         url: imageUrl,
@@ -1182,12 +1168,8 @@ function extractImageFromText(text: string): { images: ImageItemView[]; cleanedT
   while ((match = mediaPathRegex.exec(text)) !== null) {
     const imagePath = match[1]
     if (imagePath && imagePath.match(/\.(png|jpg|jpeg|gif|webp|bmp)$/i)) {
-<<<<<<< HEAD
       const normalizedPath = normalizeMediaPath(imagePath)
       const imageUrl = `/api/media?path=${encodeURIComponent(normalizedPath)}`
-=======
-      const imageUrl = `/api/media?path=${encodeURIComponent(imagePath)}`
->>>>>>> 85873852dfefe92345a786b9d45ae2b966a444bd
       images.push({
         mimeType: `image/${imagePath.split('.').pop()?.toLowerCase() || 'png'}`,
         url: imageUrl,
