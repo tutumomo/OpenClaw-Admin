@@ -264,10 +264,40 @@ async function fetchDashboardData() {
 }
 
 // ─── Computed chart options ───────────────────────────────────────────────────
-const effectiveMetrics = computed<typeof mockData.metrics>(() => {
+const effectiveMetrics = computed(() => {
   // If real data exists from Feishu, use it; otherwise mock
   return mockData.metrics
 })
+
+interface TrendData {
+  date: string
+  rate: number
+}
+
+interface CommitData {
+  date: string
+  commits: number
+}
+
+interface PriorityData {
+  name: string
+  value: number
+}
+
+interface TaskTypeData {
+  name: string
+  value: number
+}
+
+interface StatusData {
+  name: string
+  value: number
+}
+
+interface AgentData {
+  name: string
+  value: number
+}
 
 // Line Chart: Task Completion Trend
 const completionTrendOption = computed(() => ({

@@ -1,7 +1,10 @@
 import MarkdownIt from 'markdown-it'
-import DOMPurify from 'dompurify'
+import type { SanitizeOptions } from 'dompurify'
 import katex from 'katex'
 import hljs from 'highlight.js'
+
+// DOMPurify is only available in browser environment
+const DOMPurify = typeof window !== 'undefined' ? (window as any).DOMPurify : null
 
 type SimpleMarkdownRenderOptions = {
   emptyHtml?: string
@@ -543,7 +546,7 @@ export function renderSimpleMarkdown(markdown: string, options: SimpleMarkdownRe
 
   // Sanitize HTML to prevent XSS attacks (markdown-it has html: true, which allows raw HTML).
   // Only skip sanitization when explicitly disabled for trusted content.
-  if (options.sanitize === false) {
+  if (options.sanitize === false || !DOMPurify) {
     return rawHtml
   }
 
