@@ -15,6 +15,7 @@ import pty from 'node-pty'
 import db, { createBackupRecord, updateBackupRecord, getBackupRecord, getBackupRecords, getBackupRecordsCount, deleteBackupRecord } from './database.js'
 import { registerOfficeRoutes, migrateOfficeTables } from './office.js'
 import { registerMyWorldRoutes, migrateMyWorldTables } from './myworld.js'
+import auditRoutes from './routes/audit.routes.js'
 import {
   hashPassword, verifyPassword, generateToken, createSession,
   validateSession, invalidateSession, invalidateAllUserSessions,
@@ -3749,6 +3750,9 @@ migrateOfficeTables()
 registerOfficeRoutes(app)
 migrateMyWorldTables()
 registerMyWorldRoutes(app)
+
+// Register Audit Log API routes
+app.use('/api/audit', auditRoutes)
 
 // =====================================================
 // R-01: User & Role Management API

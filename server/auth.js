@@ -264,6 +264,71 @@ export function cleanupExpiredSessions() {
   return result.changes
 }
 
+// ========== Audit Log Extended Functions ==========
+export function getAuditLogById(id) {
+  const log = db.prepare('SELECT * FROM audit_logs WHERE id = ?').get(id)
+  if (!log) return null
+  return { ...log, details: JSON.parse(log.details || '{}') }
+}
+
+export function getAuditLogStatistics({ startTime, endTime } = {}) {
+  const conditions = []
+  const params = []
+
+  if (startTime) { conditions.push('created_at >= ?'); params.push(startTime) }
+  if (endTime) { conditions.push('created_at <= ?'); params.push(endTime) }
+
+  const where = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : ''
+
+  // 总数
+  const total = db.prepare(`SELECT COUNT(*) as count FROM audit_logs ${where}`).get(...params).count
+
+  // 按状态统计
+  const byStatus = db.prepare(`
+    SELECT status, COUNT(*) as count 
+    FROM audit_logs ${where} 
+    GROUP BY status
+  `).all(...params)
+
+  // 按动作统计（前 10）
+  const byAction = db.prepare(`
+    SELECT action, COUNT(*) as count 
+    FROM audit_logs ${where} 
+    GROUP BY action 
+    ORDER BY count DESC 
+    LIMIT 10
+  `).all(...params)
+
+  // 按用户统计（前 10）
+  const byUser = db.prepare(`
+    SELECT username, COUNT(*) as count 
+    FROM audit_logs ${where} 
+    GROUP BY username 
+    HAVING username IS NOT NULL
+    ORDER BY count DESC 
+    LIMIT 10
+  `).all(...params)
+
+  // 最近 24 小时趋势（每小时）
+  const last24hStart = Date.now() - 24 * 60 * 60 * 1000
+  const trend = db.prepare(`
+    SELECT 
+      strftime('%Y-%m-%d %H:00', created_at / 1000, 'unixepoch') as hour,
+      COUNT(*) as count
+    FROM audit_logs
+    WHERE created_at >= ?
+    GROUP BY hour
+    ORDER BY hour
+  `).all(last24hStart)
+
+  return {
+    total,
+    byStatus: byStatus.reduce((acc, r) => { acc[r.status] = r.count; return acc }, {}),
+    byAction: byAction.reduce((acc, r) => { acc[r.action] = r.count; return acc }, {}),
+    byUser: byUser.reduce((acc, r) => { acc[r.username] = r.count; return acc }, {}),
+    trend: trend.map(r => ({ hour: r.hour, count: r.count }))
+  }
+
 // ========== Audit Logging ==========
 export function createAuditLog({ userId, username, action, resource, resourceId, details, ipAddress, userAgent, status = 'success', errorMessage = null }) {
   const id = randomUUID()

@@ -28,7 +28,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, defineProps, defineEmits } from 'vue'
+import { ref } from 'vue'
 import { NText, NButton, NIcon, NSpin, NAlert } from 'naive-ui'
 import { RefreshOutline } from '@vicons/ionicons5'
 import { useI18n } from 'vue-i18n'

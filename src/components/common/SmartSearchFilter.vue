@@ -56,7 +56,7 @@
           <!-- 多选筛选 -->
           <NSelect
             v-if="filter.type === 'multiple'"
-            v-model:value="filterValues[filter.key]"
+            v-model:value="filterValues[filter.key] as any"
             :options="filter.options as SelectMixedOption[]"
             :placeholder="filter.placeholder"
             multiple
@@ -68,9 +68,10 @@
           <!-- 日期范围筛选 -->
           <template v-if="filter.type === 'dateRange'">
             <NDatePicker
-              v-model:value="filterValues[filter.key]"
+              v-model:value="filterValues[filter.key] as any"
               type="daterange"
-              :placeholder="[filter.placeholderStart, filter.placeholderEnd]"
+              :placeholder="filter.placeholderStart || ''"
+              :placeholder-end="filter.placeholderEnd || ''"
               size="small"
               style="width: 250px"
               @update:value="handleFilterChange"
@@ -97,7 +98,7 @@
     <!-- 搜索结果统计 -->
     <div v-if="resultCount !== null" class="result-stats">
       <NText depth="3">
-        {{ t('search.results', { count: resultCount, total: totalItems }) }}
+        {{ t('search.results', { count: resultCount, total: totalItems || 0 }) }}
       </NText>
     </div>
   </div>
@@ -126,9 +127,9 @@ interface FilterOption {
 }
 
 interface SelectMixedOption {
+  [key: string]: any
   label: string
   value: string | number
-  type?: string
 }
 
 interface FilterConfig {
@@ -212,7 +213,7 @@ function getActiveFilters(): Record<string, any> {
       if (Array.isArray(value) && value.length > 0) {
         active[key] = value
       } else if (!Array.isArray(value)) {
-        active[key] = value
+        active[key] = String(value)
       }
     }
   })
@@ -244,7 +245,7 @@ function toggleQuickFilter(key: string): void {
       })
       // 应用新筛选器
       Object.entries(qf.filters).forEach(([k, v]) => {
-        if (filterValues.value.hasOwnProperty(k)) {
+        if (filterValues.value.hasOwnProperty(k) && v !== undefined) {
           filterValues.value[k] = v
         }
       })
